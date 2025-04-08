@@ -1,10 +1,17 @@
-const express = require('express');
-const cors = require('cors');
-const productsRoute = require('./routes/products');
-
+const express = require("express");
+const { getAsbisProducts } = require("./asbisFetcher");
 const app = express();
-app.use(cors());
-app.use('/api/products', productsRoute);
+const PORT = process.env.PORT || 3001;
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get("/api/products", async (req, res) => {
+  try {
+    const products = await getAsbisProducts();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching products" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
